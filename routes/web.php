@@ -15,11 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Authentication Routes
 Route::get('login', [LoginController::class, 'LoginPage'])->name('auth.login.page');
+Route::post('login/request', [LoginController::class, 'LoginRequest'])->name('auth.login.submit');
+Route::post('logout/request', [LoginController::class, 'LogoutRequest'])->name('auth.logout');
 
-// Superadmin Route
-Route::get('superadmin/dashboard', [SuperAdminDashboardController::class, 'SuperAdminDashboardPage'])->name('superadmin.dashboard.page');
-
+// Superadmin Protected Routes
+Route::middleware(['superadmin'])->group(function () {
+    Route::get('superadmin/dashboard', [SuperAdminDashboardController::class, 'SuperAdminDashboardPage'])->name('superadmin.dashboard.page');
+});
 
 Route::get('/', function () {
     return view('welcome');

@@ -41,15 +41,27 @@
                     <p>Sign in to continue to your dashboard.</p>
                 </div>
 
-                <div id="alertContainer"></div>
+                <div id="alertContainer">
+                    @if ($errors->any())
+                        <div class="alert-custom">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <div>
+                                @foreach ($errors->all() as $error)
+                                    {{ $error }}<br>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
 
-                <form id="loginForm" novalidate>
+                <form id="loginForm" action="{{ route('auth.login.submit') }}" method="POST" novalidate>
+                    @csrf
                     <div class="mb-3">
                         <label class="form-label" for="email">Email Address</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                            <input type="email" class="form-control" id="email" placeholder="name@naap.ph"
-                                required>
+                            <input type="email" name="email" class="form-control" id="email" placeholder="name@naap.ph"
+                                value="{{ old('email') }}" required>
                         </div>
                     </div>
 
@@ -57,7 +69,7 @@
                         <label class="form-label" for="password">Password</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                            <input type="password" class="form-control" id="password" placeholder="Enter your password"
+                            <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password"
                                 required>
                             <button class="input-group-text" type="button" id="togglePassword"
                                 aria-label="Show password">
@@ -68,7 +80,7 @@
 
                     <div class="helper-row">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe">
+                            <input class="form-check-input" type="checkbox" name="remember" id="rememberMe">
                             <label class="form-check-label" for="rememberMe">Remember me</label>
                         </div>
                         <a class="helper-link" href="#">Forgot password?</a>
@@ -138,11 +150,13 @@
                         return;
                     }
 
-                    // Success: show loading spinner and redirect/submit
+                    // Success: show loading spinner and submit
                     const submitBtn = loginForm.querySelector('.btn-login');
                     submitBtn.disabled = true;
                     submitBtn.innerHTML =
                         '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Signing in...';
+
+                    loginForm.submit();
                 });
             }
 
@@ -152,6 +166,29 @@
             }
         });
     </script>
+    @if(session('swal_success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: "{{ session('swal_success') }}"
+            });
+        });
+    </script>
+    @endif
 </body>
 
 </html>

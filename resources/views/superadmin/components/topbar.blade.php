@@ -23,10 +23,13 @@
                     <i class="bi bi-person"></i>
                     Profile
                 </button>
-                <button class="user-menu-item logout" type="button">
-                    <i class="bi bi-box-arrow-right"></i>
-                    Logout
-                </button>
+                <form action="{{ route('auth.logout') }}" method="POST" style="margin: 0; width: 100%;">
+                    @csrf
+                    <button class="user-menu-item logout" type="submit" style="width: 100%;">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </button>
+                </form>
             </div>
         </div>
     </div>
