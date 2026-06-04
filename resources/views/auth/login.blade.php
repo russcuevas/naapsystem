@@ -37,9 +37,11 @@
         <section class="form-side">
             <div class="login-card">
                 <div class="login-head mb-4">
-                    <h2>Welcome back</h2>
+                    <h2>Welcome</h2>
                     <p>Sign in to continue to your dashboard.</p>
                 </div>
+
+                <div id="alertContainer"></div>
 
                 <form id="loginForm" novalidate>
                     <div class="mb-3">
@@ -77,6 +79,79 @@
             </div>
         </section>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const alertContainer = document.getElementById('alertContainer');
+            const togglePassword = document.getElementById('togglePassword');
+            const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+            // Toggle password visibility
+            if (togglePassword && passwordInput && togglePasswordIcon) {
+                togglePassword.addEventListener('click', function() {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                    togglePasswordIcon.className = isPassword ? 'bi bi-eye-slash' : 'bi bi-eye';
+                });
+            }
+
+            // Client-side validation
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Clear previous states
+                    alertContainer.innerHTML = '';
+                    emailInput.classList.remove('is-invalid');
+                    passwordInput.classList.remove('is-invalid');
+
+                    const emailVal = emailInput.value.trim();
+                    const passwordVal = passwordInput.value.trim();
+                    const errors = [];
+
+                    if (!emailVal) {
+                        emailInput.classList.add('is-invalid');
+                        errors.push('Please enter your email address.');
+                    } else if (!validateEmail(emailVal)) {
+                        emailInput.classList.add('is-invalid');
+                        errors.push('Please enter a valid email address.');
+                    }
+
+                    if (!passwordVal) {
+                        passwordInput.classList.add('is-invalid');
+                        errors.push('Please enter your password.');
+                    }
+
+                    if (errors.length > 0) {
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert-custom';
+                        alertDiv.innerHTML = `
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <div>
+                                ${errors.join('<br>')}
+                            </div>
+                        `;
+                        alertContainer.appendChild(alertDiv);
+                        return;
+                    }
+
+                    // Success: show loading spinner and redirect/submit
+                    const submitBtn = loginForm.querySelector('.btn-login');
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Signing in...';
+                });
+            }
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+        });
+    </script>
 </body>
 
 </html>

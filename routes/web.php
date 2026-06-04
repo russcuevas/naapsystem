@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('auth/login', [LoginController::class, 'LoginPage'])->name('auth.login.page');
+Route::get('login', [LoginController::class, 'LoginPage'])->name('auth.login.page');
 
 // Superadmin Route
 Route::get('superadmin/dashboard', [SuperAdminDashboardController::class, 'SuperAdminDashboardPage'])->name('superadmin.dashboard.page');
